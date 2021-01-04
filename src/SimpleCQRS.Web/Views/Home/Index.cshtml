@@ -1,0 +1,17 @@
+﻿@model IEnumerable<SimpleCQRS.InventoryItemListDto>
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<h2>All items:</h2>
+<ul>
+    @{
+        foreach (var inventoryItemListDto in Model)
+        {
+            <li>
+                <a asp-controller="Home" asp-action="Details" asp-route-id="@inventoryItemListDto.Id">@inventoryItemListDto.Name</a>
+            </li>
+        }
+    }
+</ul>
+<a asp-controller="Home" asp-action="Add">Add</a>

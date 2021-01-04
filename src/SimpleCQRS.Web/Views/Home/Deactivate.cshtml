@@ -1,0 +1,16 @@
+﻿@model SimpleCQRS.InventoryItemDetailsDto
+
+@{
+    ViewBag.Title = "title";
+    Layout = "_Layout";
+}
+
+<h2>Deactivate</h2>
+
+<form method="post">
+    <input type="hidden" id="Id" name="Id" value="@Model.Id" />
+    <input type="hidden" id="Version" name="Version" value="@Model.Version" />
+    Deactivate: @Model.Name - (Version: @Model.Version)<br />
+    <br />
+    <button asp-controller="Home" asp-action="Deactivate">Submit</button>
+</form>

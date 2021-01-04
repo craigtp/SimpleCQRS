@@ -1,0 +1,17 @@
+﻿@model SimpleCQRS.InventoryItemDetailsDto
+
+@{
+    ViewBag.Title = "Details";
+    Layout = "_Layout";
+}
+
+<h2>Details</h2>
+
+Id: @Model.Id<br/>
+Name: @Model.Name<br />
+Count: @Model.CurrentCount<br />
+<br />
+<a asp-controller="Home" asp-action="ChangeName" asp-route-id="@Model.Id">Rename</a><br />
+<a asp-controller="Home" asp-action="Deactivate" asp-route-id="@Model.Id">Deactivate</a><br />
+<a asp-controller="Home" asp-action="CheckIn" asp-route-id="@Model.Id">Check In</a><br />
+<a asp-controller="Home" asp-action="Remove" asp-route-id="@Model.Id">Remove</a>

@@ -1,0 +1,17 @@
+﻿@model SimpleCQRS.InventoryItemDetailsDto
+
+@{
+    ViewBag.Title = "title";
+    Layout = "_Layout";
+}
+
+<h2>Change Name</h2>
+
+<form method="post">
+    <input type="hidden" id="Id" name="Id" value="@Model.Id" />
+    <input type="hidden" id="Version" name="Version" value="@Model.Version" />
+    Item: @Model.Name - (Version: @Model.Version)<br />
+    Name: <input id="name" name="name"><br />
+    <br />
+    <button asp-controller="Home" asp-action="ChangeName">Submit</button>
+</form>
