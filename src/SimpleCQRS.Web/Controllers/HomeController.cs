@@ -9,8 +9,8 @@ namespace SimpleCQRS.Web.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-        private FakeBus _bus;
-        private ReadModelFacade _readmodel;
+        private readonly FakeBus _bus;
+        private readonly IReadModelFacade _readmodel;
 
         public HomeController(ILogger<HomeController> logger)
         {
@@ -40,8 +40,8 @@ namespace SimpleCQRS.Web.Controllers
         [HttpPost]
         public ActionResult Add(string name)
         {
-            _bus.Send(new CreateInventoryItem(Guid.NewGuid(), name));
-
+            var command = new CreateInventoryItem(Guid.NewGuid(), name);
+            _bus.Send(command);
             return RedirectToAction("Index");
         }
 
@@ -56,7 +56,6 @@ namespace SimpleCQRS.Web.Controllers
         {
             var command = new RenameInventoryItem(id, name, version);
             _bus.Send(command);
-
             return RedirectToAction("Index");
         }
 
@@ -69,7 +68,8 @@ namespace SimpleCQRS.Web.Controllers
         [HttpPost]
         public ActionResult Deactivate(Guid id, int version)
         {
-            _bus.Send(new DeactivateInventoryItem(id, version));
+            var command = new DeactivateInventoryItem(id, version);
+            _bus.Send(command);
             return RedirectToAction("Index");
         }
 
@@ -82,7 +82,8 @@ namespace SimpleCQRS.Web.Controllers
         [HttpPost]
         public ActionResult CheckIn(Guid id, int number, int version)
         {
-            _bus.Send(new CheckInItemsToInventory(id, number, version));
+            var command = new CheckInItemsToInventory(id, number, version);
+            _bus.Send(command);
             return RedirectToAction("Index");
         }
 
@@ -95,7 +96,8 @@ namespace SimpleCQRS.Web.Controllers
         [HttpPost]
         public ActionResult Remove(Guid id, int number, int version)
         {
-            _bus.Send(new RemoveItemsFromInventory(id, number, version));
+            var command = new RemoveItemsFromInventory(id, number, version);
+            _bus.Send(command);
             return RedirectToAction("Index");
         }
 
