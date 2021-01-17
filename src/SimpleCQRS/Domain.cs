@@ -8,15 +8,18 @@ namespace SimpleCQRS
         private bool _activated;
         private Guid _id;
 
-        private void Apply(InventoryItemCreated e)
+        protected override void Apply(Event @event)
         {
-            _id = e.Id;
-            _activated = true;
-        }
-
-        private void Apply(InventoryItemDeactivated e)
-        {
-            _activated = false;
+            switch (@event)
+            {
+                case InventoryItemCreated e:
+                    _id = e.Id;
+                    _activated = true;
+                    break;
+                case InventoryItemDeactivated e:
+                    _activated = false;
+                    break;
+            }
         }
 
         public void ChangeName(string newName)
@@ -48,7 +51,7 @@ namespace SimpleCQRS
         {
             get { return _id; }
         }
-
+        
         public InventoryItem()
         {
             // used to create in repository ... many ways to avoid this, eg making private constructor
@@ -82,6 +85,8 @@ namespace SimpleCQRS
             foreach (var e in history) ApplyChange(e, false);
         }
 
+        protected abstract void Apply(Event @event);
+
         protected void ApplyChange(Event @event)
         {
             ApplyChange(@event, true);
@@ -90,7 +95,7 @@ namespace SimpleCQRS
         // push atomic aggregate changes to local history for further processing (EventStore.SaveEvents)
         private void ApplyChange(Event @event, bool isNew)
         {
-            this.AsDynamic().Apply(@event);
+            Apply(@event);
             if (isNew) _changes.Add(@event);
         }
     }
