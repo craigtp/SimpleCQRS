@@ -70,7 +70,7 @@ namespace SimpleCQRS
         }
 
         // collect all processed events for given aggregate and return them as a list
-        // used to build up an aggregate from its history (Domain.LoadsFromHistory)
+        // used to build up an aggregate from its history (Domain.LoadFromHistory)
         public List<Event> GetEventsForAggregate(Guid aggregateId)
         {
             List<EventDescriptor> eventDescriptors;
