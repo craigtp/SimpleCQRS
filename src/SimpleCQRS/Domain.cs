@@ -5,8 +5,10 @@ namespace SimpleCQRS
 {
     public class InventoryItem : AggregateRoot
     {
-        private bool _activated;
         private Guid _id;
+        private bool _activated;
+        private string _name;
+        private int _quantity;
 
         protected override void Apply(Event @event)
         {
@@ -14,11 +16,34 @@ namespace SimpleCQRS
             {
                 case InventoryItemCreated e:
                     _id = e.Id;
+                    _name = e.Name;
                     _activated = true;
                     break;
                 case InventoryItemDeactivated e:
                     _activated = false;
                     break;
+                case InventoryItemRenamed e:
+                    _name = e.NewName;
+                    break;
+                case ItemsCheckedInToInventory e:
+                    _quantity += e.Count;
+                    break;
+                case ItemsRemovedFromInventory e:
+                    _quantity -= e.Count;
+                    break;
+            }
+        }
+
+        protected override void EnsureValid()
+        {
+            // All aggregate business logic and validation of invariants lives in this method.
+            var valid = Id != Guid.Empty &&
+                            !string.IsNullOrEmpty(_name) &&
+                            _quantity >= 0;
+
+            if (!valid)
+            {
+                throw new InvalidEntityStateException(this, "Entity validation failed");
             }
         }
 
@@ -82,10 +107,16 @@ namespace SimpleCQRS
 
         public void LoadFromHistory(IEnumerable<Event> history)
         {
-            foreach (var e in history) ApplyChange(e, false);
+            foreach (var e in history)
+            {
+                ApplyChange(e, false);
+                Version++;
+            }
         }
 
         protected abstract void Apply(Event @event);
+
+        protected abstract void EnsureValid();
 
         protected void ApplyChange(Event @event)
         {
@@ -96,6 +127,7 @@ namespace SimpleCQRS
         private void ApplyChange(Event @event, bool isNew)
         {
             Apply(@event);
+            EnsureValid();
             if (isNew) _changes.Add(@event);
         }
     }
@@ -130,4 +162,12 @@ namespace SimpleCQRS
         }
     }
 
+    public class InvalidEntityStateException : Exception
+    {
+        public InvalidEntityStateException(object entity, string message)
+            : base(
+                $"Entity {entity.GetType().Name} state change rejected, {message}"
+            )
+        { }
+    }
 }

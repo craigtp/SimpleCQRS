@@ -22,7 +22,6 @@ namespace SimpleCQRS.Web.Controllers
         public ActionResult Index()
         {
             ViewData.Model = _readmodel.GetInventoryItems();
-
             return View();
         }
 
@@ -101,6 +100,7 @@ namespace SimpleCQRS.Web.Controllers
             return RedirectToAction("Index");
         }
 
+        [Route("/Error")]
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
