@@ -6,7 +6,7 @@ namespace SimpleCQRS
 {
     public class FakeBus : ICommandSender, IEventPublisher
     {
-        private readonly Dictionary<Type, List<Action<Message>>> _routes = new Dictionary<Type, List<Action<Message>>>();
+        private readonly Dictionary<Type, List<Action<Message>>> _routes = new();
 
         public void RegisterHandler<T>(Action<T> handler) where T : Message
         {
@@ -16,6 +16,12 @@ namespace SimpleCQRS
             {
                 handlers = new List<Action<Message>>();
                 _routes.Add(typeof(T), handlers);
+            }
+
+            if (typeof(T).IsAssignableTo(typeof(Command)) && handlers.Count > 0)
+            {
+                // Don't allow more than one command handler to be registered for each command.
+                throw new InvalidOperationException("Only one handler per command is allowed.");
             }
 
             handlers.Add((x => handler((T)x)));
@@ -59,8 +65,8 @@ namespace SimpleCQRS
     public interface ICommandSender
     {
         void Send<T>(T command) where T : Command;
-
     }
+
     public interface IEventPublisher
     {
         void Publish<T>(T @event) where T : Event;
