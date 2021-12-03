@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace SimpleCQRS
 {
@@ -36,14 +37,21 @@ namespace SimpleCQRS
 
         protected override void EnsureValid()
         {
-            // All aggregate business logic and validation of invariants lives in this method.
-            var valid = Id != Guid.Empty &&
-                            !string.IsNullOrEmpty(_name) &&
-                            _quantity >= 0;
+            // All aggregate business logic and validation of invariants lives in this method.  
+            var idValid = Id != Guid.Empty;
+            var nameValid = !string.IsNullOrEmpty(_name);
+            var quantityValid = _quantity >= 0;
+            var valid = idValid && nameValid && quantityValid;
 
             if (!valid)
             {
-                throw new InvalidEntityStateException(this, "Entity validation failed");
+                var message = string.Join(", ", new[]
+                {
+                    idValid ? string.Empty : "Id cannot be an empty Guid",
+                    nameValid ? string.Empty : "Name cannot be blank",
+                    quantityValid ? string.Empty : "Quantity cannot be negative"
+                }.Where(s => !string.IsNullOrEmpty(s)));
+                throw new InvalidEntityStateException(this, message);
             }
         }
 
@@ -58,7 +66,6 @@ namespace SimpleCQRS
             if (count <= 0) throw new InvalidOperationException("cant remove negative count from inventory");
             ApplyChange(new ItemsRemovedFromInventory(_id, count));
         }
-
 
         public void CheckIn(int count)
         {

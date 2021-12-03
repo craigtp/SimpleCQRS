@@ -39,9 +39,16 @@ namespace SimpleCQRS.Web.Controllers
         [HttpPost]
         public ActionResult Add(string name)
         {
-            var command = new CreateInventoryItem(Guid.NewGuid(), name);
-            _bus.Send(command);
-            return RedirectToAction("Index");
+            try
+            {
+                var command = new CreateInventoryItem(Guid.NewGuid(), name);
+                _bus.Send(command);
+                return RedirectToAction("Index");
+            }
+            catch (Exception ex)
+            {
+                return RedirectToAction("MyError", new { errorMessage = ex.Message});
+            }
         }
 
         public ActionResult ChangeName(Guid id)
@@ -105,6 +112,16 @@ namespace SimpleCQRS.Web.Controllers
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
+
+
+        public IActionResult MyError(string errorMessage)
+        {
+            return View(new ErrorViewModel
+            {
+                RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier,
+                Message = errorMessage
+            });
         }
     }
 }
