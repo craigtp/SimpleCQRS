@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using SimpleCQRS.Web.Models;
 using System;
 using System.Diagnostics;
+using Microsoft.AspNetCore.Diagnostics;
 
 namespace SimpleCQRS.Web.Controllers
 {
@@ -39,16 +40,9 @@ namespace SimpleCQRS.Web.Controllers
         [HttpPost]
         public ActionResult Add(string name)
         {
-            try
-            {
-                var command = new CreateInventoryItem(Guid.NewGuid(), name);
-                _bus.Send(command);
-                return RedirectToAction("Index");
-            }
-            catch (Exception ex)
-            {
-                return RedirectToAction("MyError", new { errorMessage = ex.Message});
-            }
+            var command = new CreateInventoryItem(Guid.NewGuid(), name);
+            _bus.Send(command);
+            return RedirectToAction("Index");
         }
 
         public ActionResult ChangeName(Guid id)
@@ -111,12 +105,8 @@ namespace SimpleCQRS.Web.Controllers
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
-
-
-        public IActionResult MyError(string errorMessage)
-        {
+            var exceptionHandlerPathFeature = HttpContext.Features.Get<IExceptionHandlerPathFeature>();
+            var errorMessage = exceptionHandlerPathFeature.Error.Message;
             return View(new ErrorViewModel
             {
                 RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier,
