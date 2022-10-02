@@ -7,7 +7,7 @@ namespace SimpleCQRS
     public interface IEventStore
     {
         void SaveEvents(Guid aggregateId, IEnumerable<Event> events, int expectedVersion);
-        List<Event> GetEventsForAggregate(Guid aggregateId);
+        IEnumerable<Event> GetEventsForAggregate(Guid aggregateId);
     }
 
     public class EventStore : IEventStore
@@ -16,7 +16,6 @@ namespace SimpleCQRS
 
         private struct EventDescriptor
         {
-
             public readonly Event EventData;
             public readonly Guid Id;
             public readonly int Version;
@@ -34,7 +33,7 @@ namespace SimpleCQRS
             _publisher = publisher;
         }
 
-        private readonly Dictionary<Guid, List<EventDescriptor>> _current = new Dictionary<Guid, List<EventDescriptor>>();
+        private readonly Dictionary<Guid, List<EventDescriptor>> _current = new();
 
         public void SaveEvents(Guid aggregateId, IEnumerable<Event> events, int expectedVersion)
         {
@@ -71,7 +70,7 @@ namespace SimpleCQRS
 
         // collect all processed events for given aggregate and return them as a list
         // used to build up an aggregate from its history (Domain.LoadFromHistory)
-        public List<Event> GetEventsForAggregate(Guid aggregateId)
+        public IEnumerable<Event> GetEventsForAggregate(Guid aggregateId)
         {
             List<EventDescriptor> eventDescriptors;
 

@@ -97,7 +97,7 @@ namespace SimpleCQRS
 
     public abstract class AggregateRoot
     {
-        private readonly List<Event> _changes = new List<Event>();
+        private readonly List<Event> _changes = new();
 
         public abstract Guid Id { get; }
         public int Version { get; internal set; }

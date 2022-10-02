@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading;
+// ReSharper disable InconsistentNaming
 
 namespace SimpleCQRS
 {
@@ -51,8 +52,8 @@ namespace SimpleCQRS
             foreach (var handler in handlers)
             {
                 //dispatch on thread pool for added awesomeness
-                var handler1 = handler;
-                ThreadPool.QueueUserWorkItem(x => handler1(@event));
+                var handlerClosure = handler;
+                ThreadPool.QueueUserWorkItem(_ => handlerClosure(@event));
             }
         }
     }

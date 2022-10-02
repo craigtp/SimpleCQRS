@@ -41,18 +41,21 @@ namespace SimpleCQRS
     {
         public void Handle(InventoryItemCreated message)
         {
-            FakeDatabase.list.Add(new InventoryItemListDto(message.Id, message.Name));
+            FakeDatabase.List.Add(new InventoryItemListDto(message.Id, message.Name));
         }
 
         public void Handle(InventoryItemRenamed message)
         {
-            var item = FakeDatabase.list.Find(x => x.Id == message.Id);
-            item.Name = message.NewName;
+            var item = FakeDatabase.List.Find(x => x.Id == message.Id);
+            if (item != null)
+            {
+                item.Name = message.NewName;
+            }
         }
 
         public void Handle(InventoryItemDeactivated message)
         {
-            FakeDatabase.list.RemoveAll(x => x.Id == message.Id);
+            FakeDatabase.List.RemoveAll(x => x.Id == message.Id);
         }
     }
 
@@ -60,7 +63,7 @@ namespace SimpleCQRS
     {
         public void Handle(InventoryItemCreated message)
         {
-            FakeDatabase.details.Add(message.Id, new InventoryItemDetailsDto(message.Id, message.Name, 0, 0));
+            FakeDatabase.Details.Add(message.Id, new InventoryItemDetailsDto(message.Id, message.Name, 0, 0));
         }
 
         public void Handle(InventoryItemRenamed message)
@@ -72,11 +75,9 @@ namespace SimpleCQRS
 
         private InventoryItemDetailsDto GetDetailsItem(Guid id)
         {
-            InventoryItemDetailsDto d;
-
-            if (!FakeDatabase.details.TryGetValue(id, out d))
+            if (!FakeDatabase.Details.TryGetValue(id, out var d))
             {
-                throw new InvalidOperationException("did not find the original inventory this shouldnt happen");
+                throw new InvalidOperationException("Could not find the original inventory item.  This shouldn't happen");
             }
 
             return d;
@@ -98,7 +99,7 @@ namespace SimpleCQRS
 
         public void Handle(InventoryItemDeactivated message)
         {
-            FakeDatabase.details.Remove(message.Id);
+            FakeDatabase.Details.Remove(message.Id);
         }
     }
 
@@ -106,18 +107,18 @@ namespace SimpleCQRS
     {
         public IEnumerable<InventoryItemListDto> GetInventoryItems()
         {
-            return FakeDatabase.list;
+            return FakeDatabase.List;
         }
 
         public InventoryItemDetailsDto GetInventoryItemDetails(Guid id)
         {
-            return FakeDatabase.details[id];
+            return FakeDatabase.Details[id];
         }
     }
 
-    internal class FakeDatabase
+    internal static class FakeDatabase
     {
-        public static Dictionary<Guid, InventoryItemDetailsDto> details = new Dictionary<Guid, InventoryItemDetailsDto>();
-        public static List<InventoryItemListDto> list = new List<InventoryItemListDto>();
+        public static readonly Dictionary<Guid, InventoryItemDetailsDto> Details = new();
+        public static readonly List<InventoryItemListDto> List = new();
     }
 }
