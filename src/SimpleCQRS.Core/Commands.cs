@@ -1,5 +1,5 @@
 ﻿using System;
-namespace SimpleCQRS
+namespace SimpleCQRS.Core
 {
     public class Command : Message
     {
@@ -15,6 +15,11 @@ namespace SimpleCQRS
             InventoryItemId = inventoryItemId;
             OriginalVersion = originalVersion;
         }
+        
+        public override string ToString()
+        {
+            return $"deactivate inventory item with Id of {InventoryItemId}";
+        }
     }
 
     public class CreateInventoryItem : Command
@@ -26,6 +31,11 @@ namespace SimpleCQRS
         {
             InventoryItemId = inventoryItemId;
             Name = name;
+        }
+
+        public override string ToString()
+        {
+            return $"create inventory item with Id of {InventoryItemId} and name of {Name}";
         }
     }
 

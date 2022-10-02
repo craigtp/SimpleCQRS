@@ -1,35 +1,42 @@
 ﻿using System;
-namespace SimpleCQRS
+namespace SimpleCQRS.Core
 {
     public class Event : Message
     {
+        public Guid Id;
         public int Version;
     }
 
     public class InventoryItemDeactivated : Event
     {
-        public readonly Guid Id;
-
         public InventoryItemDeactivated(Guid id)
         {
             Id = id;
+        }
+        
+        public override string ToString()
+        {
+            return $"Inventory item with Id of {Id} is deactivated";
         }
     }
 
     public class InventoryItemCreated : Event
     {
-        public readonly Guid Id;
         public readonly string Name;
         public InventoryItemCreated(Guid id, string name)
         {
             Id = id;
             Name = name;
         }
+
+        public override string ToString()
+        {
+            return $"An inventory item with Id of {Id} and name of {Name} is created";
+        }
     }
 
     public class InventoryItemRenamed : Event
     {
-        public readonly Guid Id;
         public readonly string NewName;
 
         public InventoryItemRenamed(Guid id, string newName)
@@ -41,7 +48,6 @@ namespace SimpleCQRS
 
     public class ItemsCheckedInToInventory : Event
     {
-        public Guid Id;
         public readonly int Count;
 
         public ItemsCheckedInToInventory(Guid id, int count)
@@ -53,7 +59,6 @@ namespace SimpleCQRS
 
     public class ItemsRemovedFromInventory : Event
     {
-        public Guid Id;
         public readonly int Count;
 
         public ItemsRemovedFromInventory(Guid id, int count)

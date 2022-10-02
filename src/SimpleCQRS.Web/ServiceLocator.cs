@@ -1,4 +1,6 @@
-﻿namespace SimpleCQRS.Web
+﻿using SimpleCQRS.Core;
+
+namespace SimpleCQRS.Web
 {
     public static class ServiceLocator
     {

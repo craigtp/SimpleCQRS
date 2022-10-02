@@ -1,5 +1,5 @@
 ﻿// ReSharper disable InconsistentNaming
-namespace SimpleCQRS
+namespace SimpleCQRS.Core
 {
     public interface Message
     {

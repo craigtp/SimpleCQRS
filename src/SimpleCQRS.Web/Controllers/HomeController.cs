@@ -1,9 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
+﻿using SimpleCQRS.Core;
 using SimpleCQRS.Web.Models;
 using System;
 using System.Diagnostics;
 using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
 namespace SimpleCQRS.Web.Controllers
 {

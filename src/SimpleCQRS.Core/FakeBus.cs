@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 // ReSharper disable InconsistentNaming
 
-namespace SimpleCQRS
+namespace SimpleCQRS.Core
 {
     public class FakeBus : ICommandSender, IEventPublisher
     {

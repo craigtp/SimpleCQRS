@@ -1,6 +1,15 @@
-﻿namespace SimpleCQRS
+﻿namespace SimpleCQRS.Core
 {
-    public class InventoryCommandHandlers
+    public interface ICommandHandler<in T> where T : Command
+    {
+        void Handle(T command);
+    }
+    public class InventoryCommandHandlers :
+        ICommandHandler<CreateInventoryItem>,
+        ICommandHandler<DeactivateInventoryItem>,
+        ICommandHandler<RemoveItemsFromInventory>,
+        ICommandHandler<CheckInItemsToInventory>,
+        ICommandHandler<RenameInventoryItem>
     {
         private readonly IRepository<InventoryItem> _repository;
 
