@@ -4,6 +4,7 @@
     {
         void Handle(T command);
     }
+    
     public class InventoryCommandHandlers :
         ICommandHandler<CreateInventoryItem>,
         ICommandHandler<DeactivateInventoryItem>,

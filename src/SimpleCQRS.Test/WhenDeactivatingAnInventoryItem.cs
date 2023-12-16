@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using NUnit.Framework;
 using SimpleCQRS.Core;
 
@@ -16,16 +17,21 @@ public class When_Deactivating_An_Inventory_Item : EventSpecification<Deactivate
 
     public override DeactivateInventoryItem When()
     {
-        return new DeactivateInventoryItem(_inventoryItemId, 0);
+        return new DeactivateInventoryItem(_inventoryItemId, 1);
     }
 
-    public override ICommandHandler<DeactivateInventoryItem> OnHandler()
+    public override ICommandHandler<DeactivateInventoryItem> BuildCommandHandler()
     {
         return new InventoryCommandHandlers(new Repository<InventoryItem>(FakeStore));
     }
 
-    public override IEnumerable<Event> Expect()
+    public override IEnumerable<Event> Then()
     {
         yield return new InventoryItemDeactivated(_inventoryItemId);
+    }
+
+    public override Expression<Predicate<Exception>> ThenException()
+    {
+        return NoException();
     }
 }

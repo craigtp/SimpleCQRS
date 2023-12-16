@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using NUnit.Framework;
 using SimpleCQRS.Core;
 
@@ -20,13 +21,19 @@ public class When_Deactivating_An_Inventory_Item_That_Is_Already_Deactivated : E
         return new DeactivateInventoryItem(_inventoryItemId, 0);
     }
 
-    public override ICommandHandler<DeactivateInventoryItem> OnHandler()
+    public override ICommandHandler<DeactivateInventoryItem> BuildCommandHandler()
     {
         return new InventoryCommandHandlers(new Repository<InventoryItem>(FakeStore));
     }
 
-    public override IEnumerable<Event> Expect()
+    public override IEnumerable<Event> Then()
     {
-        throw new Exception();
+        return NoEvents();
+    }
+
+    public override Expression<Predicate<Exception>> ThenException()
+    {
+        return exception => exception.GetType() == typeof (InvalidOperationException) &&
+                            exception.Message == "already deactivated";
     }
 }

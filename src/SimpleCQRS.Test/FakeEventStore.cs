@@ -7,46 +7,47 @@ namespace SimpleCQRS.Test;
 
 public class FakeEventStore : IEventStore
 {
-    private readonly Dictionary<Guid, List<EventDescriptor>> _current = new();
+    private readonly Dictionary<Guid, List<EventDescriptor>> _events = new();
     
     private struct EventDescriptor
     {
         public readonly Event EventData;
         public readonly Guid Id;
         public readonly int Version;
+        public readonly bool IsSeededEvent;
 
-        public EventDescriptor(Guid id, Event eventData, int version)
+        public EventDescriptor(Guid id, Event eventData, int version, bool isSeededEvent)
         {
             EventData = eventData;
             Version = version;
             Id = id;
+            IsSeededEvent = isSeededEvent;
         }
     }
 
     public FakeEventStore(IEnumerable<Event> events)
     {
-        var guid = events.Any() ? events.First().Id : Guid.Empty;
+        var eventArray = events as Event[] ?? events.ToArray();
+        var guid = eventArray.Any() ? eventArray.First().Id : Guid.Empty;
         var eventDescriptors = new List<EventDescriptor>();
-        _current.Add(guid, eventDescriptors);
         var i = 0;
-        foreach (var @event in events)
+        foreach (var @event in eventArray)
         {
             i++;
             @event.Version = i;
-            eventDescriptors.Add(new EventDescriptor(guid, @event, i));
+            eventDescriptors.Add(new EventDescriptor(guid, @event, i, true));
         }
+        _events.Add(guid, eventDescriptors);
     }
 
     public void SaveEvents(Guid aggregateId, IEnumerable<Event> events, int expectedVersion)
     {
-        List<EventDescriptor> eventDescriptors;
-
         // try to get event descriptors list for given aggregate id
         // otherwise -> create empty dictionary
-        if (!_current.TryGetValue(aggregateId, out eventDescriptors))
+        if (!_events.TryGetValue(aggregateId, out var eventDescriptors))
         {
             eventDescriptors = new List<EventDescriptor>();
-            _current.Add(aggregateId, eventDescriptors);
+            _events.Add(aggregateId, eventDescriptors);
         }
         // check whether latest event version matches current aggregate version
         // otherwise -> throw exception
@@ -64,7 +65,7 @@ public class FakeEventStore : IEventStore
             @event.Version = i;
 
             // push event to the event descriptors list for current aggregate
-            eventDescriptors.Add(new EventDescriptor(aggregateId, @event, i));
+            eventDescriptors.Add(new EventDescriptor(aggregateId, @event, i, false));
         }
     }
 
@@ -72,9 +73,7 @@ public class FakeEventStore : IEventStore
     // used to build up an aggregate from its history (Domain.LoadFromHistory)
     public IEnumerable<Event> GetEventsForAggregate(Guid aggregateId)
     {
-        List<EventDescriptor> eventDescriptors;
-
-        if (!_current.TryGetValue(aggregateId, out eventDescriptors))
+        if (!_events.TryGetValue(aggregateId, out var eventDescriptors))
         {
             throw new AggregateNotFoundException();
         }
@@ -84,6 +83,10 @@ public class FakeEventStore : IEventStore
 
     public IEnumerable<Event> PeekChanges()
     {
-        return _current.SelectMany(x => x.Value).Select(y => y.EventData).ToList();
+        return _events
+            .SelectMany(x => x.Value)
+            .Where(y => y.IsSeededEvent == false)
+            .Select(z => z.EventData)
+            .ToList();
     }
 }
