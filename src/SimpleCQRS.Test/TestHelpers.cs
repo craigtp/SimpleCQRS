@@ -108,9 +108,14 @@ public static class TestHelpers
         Console.WriteLine("\t" + specification.When());
         Console.WriteLine();
         Console.WriteLine("Expect:");
-        try
+
+        var expected = specification.Then().ToList();
+        if (!expected.Any())
         {
-            var expected = specification.Then();
+            Console.WriteLine("\t" + "[No events]");
+        }
+        else
+        {
             var firstEvent = true;
             foreach (var @event in expected)
             {
@@ -118,11 +123,13 @@ public static class TestHelpers
                 firstEvent = false;
             }
         }
-        catch (Exception ex)
-        {
-            Console.WriteLine("\t" + $"An exception of type {ex.GetType()} is thrown.");
-        }
 
+        var expectedException = specification.ThrownException();
+        if (expectedException != null)
+        {
+            Console.WriteLine("\t" + $"and an Exception of type {expectedException.GetType()} is thrown.");
+        }
+        
         Console.WriteLine();
     }
 }

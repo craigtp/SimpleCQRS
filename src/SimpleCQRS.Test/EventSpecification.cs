@@ -12,11 +12,13 @@ namespace SimpleCQRS.Test;
 public abstract class EventSpecification<TCommand> where TCommand : Command
 {
     protected FakeEventStore? FakeStore;
+    protected Exception? CaughtException = null;
     public abstract IEnumerable<Event> Given();
     public abstract TCommand When();
-    public abstract ICommandHandler<TCommand> BuildCommandHandler();
+    protected abstract ICommandHandler<TCommand> BuildCommandHandler();
     public abstract IEnumerable<Event> Then();
-    public abstract Expression<Predicate<Exception>> ThenException();
+    //public abstract Expression<Predicate<Exception>> ThenException();
+    public abstract Exception? ThrownException();
 
     [Test]
     public void RunSpecification()
@@ -31,26 +33,36 @@ public abstract class EventSpecification<TCommand> where TCommand : Command
             handler.Handle(When());
             produced = FakeStore.PeekChanges().ToList();
         }
-        catch (Exception exception)
+        catch (Exception? exception)
         {
-            if (ThenException().Compile()(exception))
-            {
-                Assert.Pass();
-            }
-
-            var exceptionType = ThenException().Parameters[0].Type;
-            Assert.Fail($"Received an exception ({exceptionType}) that failed the provided predicate.");
+            CaughtException = exception;
+            // if (ThenException().Compile()(exception))
+            // {
+            //     Assert.Pass();
+            // }
+            //
+            // var exceptionType = ThenException().Parameters[0].Type;
+            // Assert.Fail($"Received an exception ({exceptionType}) that failed the provided predicate.");
         }
         
         CompareEvents(expected, produced);
+
+        var expectedException = ThrownException();
+        if (expectedException == null) return;
+        if (expectedException.GetType() != CaughtException?.GetType() ||
+            expectedException.Message != CaughtException.Message)
+        {
+            Assert.Fail();
+        }
+
     }
 
-    public IEnumerable<Event> NoEvents()
+    protected IEnumerable<Event> NoEvents()
     {
         return Enumerable.Empty<Event>();
     }
 
-    public Expression<Predicate<Exception>> NoException()
+    protected Expression<Predicate<Exception>> NoException()
     {
         return exception => false;
     }
@@ -61,7 +73,7 @@ public abstract class EventSpecification<TCommand> where TCommand : Command
         TestHelpers.PrintTest(this);
     }
 
-    private void CompareEvents(IEnumerable<Event> expected, IEnumerable<Event> produced)
+    private static void CompareEvents(IEnumerable<Event> expected, IEnumerable<Event> produced)
     {
         Assert.That(expected.Count(), Is.EqualTo(produced.Count()));
         Assert.True(TestHelpers.DeepEquals(expected,produced, new List<string>{"Version"}));

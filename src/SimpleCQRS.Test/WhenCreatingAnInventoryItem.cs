@@ -10,9 +10,10 @@ namespace SimpleCQRS.Test;
 public class When_Creating_An_Inventory_Item : EventSpecification<CreateInventoryItem>
 {
     private readonly Guid _inventoryItemId = Guid.NewGuid();
+
     public override IEnumerable<Event> Given()
     {
-        yield break;
+        return NoEvents();
     }
 
     public override CreateInventoryItem When()
@@ -20,7 +21,7 @@ public class When_Creating_An_Inventory_Item : EventSpecification<CreateInventor
         return new CreateInventoryItem(_inventoryItemId, _inventoryItemId.ToString());
     }
 
-    public override ICommandHandler<CreateInventoryItem> BuildCommandHandler()
+    protected override ICommandHandler<CreateInventoryItem> BuildCommandHandler()
     {
         return new InventoryCommandHandlers(new Repository<InventoryItem>(FakeStore));
     }
@@ -31,8 +32,13 @@ public class When_Creating_An_Inventory_Item : EventSpecification<CreateInventor
         //yield return new InventoryItemCreated(_inventoryItemId, "This breaks the test!");
     }
 
-    public override Expression<Predicate<Exception>> ThenException()
+    public override Exception? ThrownException()
     {
-        return NoException();
+        return null;
     }
+
+    // public override Expression<Predicate<Exception>> ThenException()
+    // {
+    //     return NoException();
+    // }
 }

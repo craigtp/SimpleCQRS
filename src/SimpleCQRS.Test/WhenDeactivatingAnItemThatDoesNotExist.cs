@@ -1,20 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq.Expressions;
 using NUnit.Framework;
 using SimpleCQRS.Core;
 
 namespace SimpleCQRS.Test;
 
 [TestFixture]
-public class When_Deactivating_An_Inventory_Item_That_Is_Already_Deactivated : EventSpecification<DeactivateInventoryItem>
+public class When_Deactivating_An_Item_That_Does_Not_Exist : EventSpecification<DeactivateInventoryItem>
 {
     private readonly Guid _inventoryItemId = Guid.NewGuid();
 
     public override IEnumerable<Event> Given()
     {
-        yield return new InventoryItemCreated(_inventoryItemId, _inventoryItemId.ToString());
-        yield return new InventoryItemDeactivated(_inventoryItemId);
+        return NoEvents();
     }
 
     public override DeactivateInventoryItem When()
@@ -34,7 +32,7 @@ public class When_Deactivating_An_Inventory_Item_That_Is_Already_Deactivated : E
     
     public override Exception? ThrownException()
     {
-        return new InvalidOperationException("already deactivated");
+        return new AggregateNotFoundException();
     }
 
     // public override Expression<Predicate<Exception>> ThenException()

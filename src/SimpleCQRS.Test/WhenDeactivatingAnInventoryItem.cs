@@ -10,6 +10,7 @@ namespace SimpleCQRS.Test;
 public class When_Deactivating_An_Inventory_Item : EventSpecification<DeactivateInventoryItem>
 {
     private readonly Guid _inventoryItemId = Guid.NewGuid();
+
     public override IEnumerable<Event> Given()
     {
         yield return new InventoryItemCreated(_inventoryItemId, _inventoryItemId.ToString());
@@ -20,7 +21,7 @@ public class When_Deactivating_An_Inventory_Item : EventSpecification<Deactivate
         return new DeactivateInventoryItem(_inventoryItemId, 1);
     }
 
-    public override ICommandHandler<DeactivateInventoryItem> BuildCommandHandler()
+    protected override ICommandHandler<DeactivateInventoryItem> BuildCommandHandler()
     {
         return new InventoryCommandHandlers(new Repository<InventoryItem>(FakeStore));
     }
@@ -30,8 +31,13 @@ public class When_Deactivating_An_Inventory_Item : EventSpecification<Deactivate
         yield return new InventoryItemDeactivated(_inventoryItemId);
     }
 
-    public override Expression<Predicate<Exception>> ThenException()
+    public override Exception? ThrownException()
     {
-        return NoException();
+        return null;
     }
+
+    // public override Expression<Predicate<Exception>> ThenException()
+    // {
+    //     return NoException();
+    // }
 }
