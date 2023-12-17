@@ -70,17 +70,15 @@ public static class TestHelpers
 
     private static bool DeepSequenceEquals(IEnumerable<object> seq1, IEnumerable<object> seq2, List<string>? elementsToIgnore)
     {
-        using (var enumerator1 = seq1.GetEnumerator())
-        using (var enumerator2 = seq2.GetEnumerator())
+        using var enumerator1 = seq1.GetEnumerator();
+        using var enumerator2 = seq2.GetEnumerator();
+        while (enumerator1.MoveNext() && enumerator2.MoveNext())
         {
-            while (enumerator1.MoveNext() && enumerator2.MoveNext())
-            {
-                if (!DeepEquals(enumerator1.Current, enumerator2.Current, elementsToIgnore))
-                    return false;
-            }
-
-            return !enumerator1.MoveNext() && !enumerator2.MoveNext();
+            if (!DeepEquals(enumerator1.Current, enumerator2.Current, elementsToIgnore))
+                return false;
         }
+
+        return !enumerator1.MoveNext() && !enumerator2.MoveNext();
     }
 
     public static void PrintTest<TCommand>(EventSpecification<TCommand> specification) where TCommand : Command
@@ -124,7 +122,7 @@ public static class TestHelpers
             }
         }
 
-        var expectedException = specification.ThrownException();
+        var expectedException = specification.ThenException();
         if (expectedException != null)
         {
             Console.WriteLine("\t" + $"and an Exception of type {expectedException.GetType()} is thrown.");

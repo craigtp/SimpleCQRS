@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using NUnit.Framework;
 using SimpleCQRS.Core;
 
@@ -12,13 +11,12 @@ namespace SimpleCQRS.Test;
 public abstract class EventSpecification<TCommand> where TCommand : Command
 {
     protected FakeEventStore? FakeStore;
-    protected Exception? CaughtException = null;
+    private Exception? _caughtException;
     public abstract IEnumerable<Event> Given();
     public abstract TCommand When();
     protected abstract ICommandHandler<TCommand> BuildCommandHandler();
     public abstract IEnumerable<Event> Then();
-    //public abstract Expression<Predicate<Exception>> ThenException();
-    public abstract Exception? ThrownException();
+    public abstract Exception? ThenException();
 
     [Test]
     public void RunSpecification()
@@ -35,7 +33,7 @@ public abstract class EventSpecification<TCommand> where TCommand : Command
         }
         catch (Exception? exception)
         {
-            CaughtException = exception;
+            _caughtException = exception;
             // if (ThenException().Compile()(exception))
             // {
             //     Assert.Pass();
@@ -47,10 +45,10 @@ public abstract class EventSpecification<TCommand> where TCommand : Command
         
         CompareEvents(expected, produced);
 
-        var expectedException = ThrownException();
+        var expectedException = ThenException();
         if (expectedException == null) return;
-        if (expectedException.GetType() != CaughtException?.GetType() ||
-            expectedException.Message != CaughtException.Message)
+        if (expectedException.GetType() != _caughtException?.GetType() ||
+            expectedException.Message != _caughtException.Message)
         {
             Assert.Fail();
         }
@@ -62,9 +60,9 @@ public abstract class EventSpecification<TCommand> where TCommand : Command
         return Enumerable.Empty<Event>();
     }
 
-    protected Expression<Predicate<Exception>> NoException()
+    protected Exception? NoException()
     {
-        return exception => false;
+        return null;
     }
     
     [TearDown]

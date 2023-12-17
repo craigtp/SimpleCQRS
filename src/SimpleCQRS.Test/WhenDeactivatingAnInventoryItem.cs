@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq.Expressions;
 using NUnit.Framework;
 using SimpleCQRS.Core;
 
@@ -31,13 +30,8 @@ public class When_Deactivating_An_Inventory_Item : EventSpecification<Deactivate
         yield return new InventoryItemDeactivated(_inventoryItemId);
     }
 
-    public override Exception? ThrownException()
+    public override Exception? ThenException()
     {
-        return null;
+        return NoException();
     }
-
-    // public override Expression<Predicate<Exception>> ThenException()
-    // {
-    //     return NoException();
-    // }
 }

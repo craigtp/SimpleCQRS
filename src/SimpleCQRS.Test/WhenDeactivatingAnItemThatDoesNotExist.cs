@@ -30,14 +30,8 @@ public class When_Deactivating_An_Item_That_Does_Not_Exist : EventSpecification<
         return NoEvents();
     }
     
-    public override Exception? ThrownException()
+    public override Exception? ThenException()
     {
         return new AggregateNotFoundException();
     }
-
-    // public override Expression<Predicate<Exception>> ThenException()
-    // {
-    //     return exception => exception.GetType() == typeof (InvalidOperationException) &&
-    //                         exception.Message == "already deactivated";
-    // }
 }

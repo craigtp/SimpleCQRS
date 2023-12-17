@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq.Expressions;
 using NUnit.Framework;
 using SimpleCQRS.Core;
 
@@ -32,14 +31,8 @@ public class When_Deactivating_An_Inventory_Item_That_Is_Already_Deactivated : E
         return NoEvents();
     }
     
-    public override Exception? ThrownException()
+    public override Exception? ThenException()
     {
         return new InvalidOperationException("already deactivated");
     }
-
-    // public override Expression<Predicate<Exception>> ThenException()
-    // {
-    //     return exception => exception.GetType() == typeof (InvalidOperationException) &&
-    //                         exception.Message == "already deactivated";
-    // }
 }
