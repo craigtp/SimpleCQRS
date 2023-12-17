@@ -51,6 +51,11 @@ namespace SimpleCQRS.Core
             NewName = newName;
             OriginalVersion = originalVersion;
         }
+        
+        public override string ToString()
+        {
+            return $"rename inventory item with Id of {InventoryItemId} and original name of {OriginalVersion} to {NewName}";
+        }
     }
 
     public class CheckInItemsToInventory : Command
@@ -65,6 +70,11 @@ namespace SimpleCQRS.Core
             Count = count;
             OriginalVersion = originalVersion;
         }
+        
+        public override string ToString()
+        {
+            return $"checking in {Count} items to inventory item with Id of {InventoryItemId}";
+        }
     }
 
     public class RemoveItemsFromInventory : Command
@@ -78,6 +88,11 @@ namespace SimpleCQRS.Core
             InventoryItemId = inventoryItemId;
             Count = count;
             OriginalVersion = originalVersion;
+        }
+        
+        public override string ToString()
+        {
+            return $"removing {Count} items from inventory item with Id of {InventoryItemId}";
         }
     }
 }

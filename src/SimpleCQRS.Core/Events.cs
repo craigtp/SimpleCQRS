@@ -44,6 +44,11 @@ namespace SimpleCQRS.Core
             Id = id;
             NewName = newName;
         }
+        
+        public override string ToString()
+        {
+            return $"An inventory item with Id of {Id} is renamed to {NewName}";
+        }
     }
 
     public class ItemsCheckedInToInventory : Event
@@ -55,6 +60,11 @@ namespace SimpleCQRS.Core
             Id = id;
             Count = count;
         }
+        
+        public override string ToString()
+        {
+            return $"An inventory item with Id of {Id} has {Count} items checked in";
+        }
     }
 
     public class ItemsRemovedFromInventory : Event
@@ -65,6 +75,11 @@ namespace SimpleCQRS.Core
         {
             Id = id;
             Count = count;
+        }
+        
+        public override string ToString()
+        {
+            return $"An inventory item with Id of {Id} has {Count} items removed";
         }
     }
 }
