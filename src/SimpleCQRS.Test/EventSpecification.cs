@@ -34,13 +34,6 @@ public abstract class EventSpecification<TCommand> where TCommand : Command
         catch (Exception? exception)
         {
             _caughtException = exception;
-            // if (ThenException().Compile()(exception))
-            // {
-            //     Assert.Pass();
-            // }
-            //
-            // var exceptionType = ThenException().Parameters[0].Type;
-            // Assert.Fail($"Received an exception ({exceptionType}) that failed the provided predicate.");
         }
         
         CompareEvents(expected, produced);
