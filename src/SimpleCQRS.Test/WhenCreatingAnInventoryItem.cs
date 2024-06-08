@@ -28,7 +28,7 @@ public class When_Creating_An_Inventory_Item : EventSpecification<CreateInventor
     public override IEnumerable<Event> Then()
     {
         yield return new InventoryItemCreated(_inventoryItemId, _inventoryItemId.ToString());
-        //yield return new InventoryItemCreated(_inventoryItemId, "This breaks the test!");
+        //yield return new InventoryItemCreated(Guid.NewGuid(), "This breaks the test!");
     }
 
     public override Exception? ThenException()

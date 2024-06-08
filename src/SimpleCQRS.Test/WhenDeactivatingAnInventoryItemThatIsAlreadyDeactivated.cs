@@ -31,7 +31,7 @@ public class When_Deactivating_An_Inventory_Item_That_Is_Already_Deactivated : E
         return NoEvents();
     }
     
-    public override Exception? ThenException()
+    public override Exception ThenException()
     {
         return new InvalidOperationException("already deactivated");
     }
