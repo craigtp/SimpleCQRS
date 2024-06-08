@@ -3,36 +3,37 @@ using System.Collections.Generic;
 using NUnit.Framework;
 using SimpleCQRS.Core;
 
-namespace SimpleCQRS.Test;
-
-[TestFixture]
-public class When_Creating_An_Inventory_Item : EventSpecification<CreateInventoryItem>
+namespace SimpleCQRS.Test
 {
-    private readonly Guid _inventoryItemId = Guid.NewGuid();
-
-    public override IEnumerable<Event> Given()
+    [TestFixture]
+    public class When_Creating_An_Inventory_Item : EventSpecification<CreateInventoryItem>
     {
-        return NoEvents();
-    }
+        private readonly Guid _inventoryItemId = Guid.NewGuid();
 
-    public override CreateInventoryItem When()
-    {
-        return new CreateInventoryItem(_inventoryItemId, _inventoryItemId.ToString());
-    }
+        public override IEnumerable<Event> Given()
+        {
+            return NoEvents();
+        }
 
-    protected override ICommandHandler<CreateInventoryItem> BuildCommandHandler()
-    {
-        return new InventoryCommandHandlers(new Repository<InventoryItem>(FakeStore));
-    }
+        public override CreateInventoryItem When()
+        {
+            return new CreateInventoryItem(_inventoryItemId, _inventoryItemId.ToString());
+        }
 
-    public override IEnumerable<Event> Then()
-    {
-        yield return new InventoryItemCreated(_inventoryItemId, _inventoryItemId.ToString());
-        //yield return new InventoryItemCreated(Guid.NewGuid(), "This breaks the test!");
-    }
+        protected override ICommandHandler<CreateInventoryItem> BuildCommandHandler()
+        {
+            return new InventoryCommandHandlers(new Repository<InventoryItem>(FakeStore));
+        }
 
-    public override Exception? ThenException()
-    {
-        return NoException();
+        public override IEnumerable<Event> Then()
+        {
+            yield return new InventoryItemCreated(_inventoryItemId, _inventoryItemId.ToString());
+            //yield return new InventoryItemCreated(Guid.NewGuid(), "This breaks the test!");
+        }
+
+        public override Exception? ThenException()
+        {
+            return NoException();
+        }
     }
 }

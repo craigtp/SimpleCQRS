@@ -3,35 +3,36 @@ using System.Collections.Generic;
 using NUnit.Framework;
 using SimpleCQRS.Core;
 
-namespace SimpleCQRS.Test;
-
-[TestFixture]
-public class When_Deactivating_An_Item_That_Does_Not_Exist : EventSpecification<DeactivateInventoryItem>
+namespace SimpleCQRS.Test
 {
-    private readonly Guid _inventoryItemId = Guid.NewGuid();
-
-    public override IEnumerable<Event> Given()
+    [TestFixture]
+    public class When_Deactivating_An_Item_That_Does_Not_Exist : EventSpecification<DeactivateInventoryItem>
     {
-        return NoEvents();
-    }
+        private readonly Guid _inventoryItemId = Guid.NewGuid();
 
-    public override DeactivateInventoryItem When()
-    {
-        return new DeactivateInventoryItem(_inventoryItemId, 0);
-    }
+        public override IEnumerable<Event> Given()
+        {
+            return NoEvents();
+        }
 
-    protected override ICommandHandler<DeactivateInventoryItem> BuildCommandHandler()
-    {
-        return new InventoryCommandHandlers(new Repository<InventoryItem>(FakeStore));
-    }
+        public override DeactivateInventoryItem When()
+        {
+            return new DeactivateInventoryItem(_inventoryItemId, 0);
+        }
 
-    public override IEnumerable<Event> Then()
-    {
-        return NoEvents();
-    }
+        protected override ICommandHandler<DeactivateInventoryItem> BuildCommandHandler()
+        {
+            return new InventoryCommandHandlers(new Repository<InventoryItem>(FakeStore));
+        }
+
+        public override IEnumerable<Event> Then()
+        {
+            return NoEvents();
+        }
     
-    public override Exception? ThenException()
-    {
-        return new AggregateNotFoundException();
+        public override Exception? ThenException()
+        {
+            return new AggregateNotFoundException();
+        }
     }
 }
