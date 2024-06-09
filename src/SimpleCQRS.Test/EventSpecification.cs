@@ -13,11 +13,11 @@ namespace SimpleCQRS.Test
     public abstract class EventSpecification<TCommand> where TCommand : Command
     {
         protected FakeEventStore? FakeStore;
-        public abstract IEnumerable<Event> Given();
-        public abstract TCommand When();
+        protected abstract IEnumerable<Event> Given();
+        protected abstract TCommand When();
         protected abstract ICommandHandler<TCommand> BuildCommandHandler();
-        public abstract IEnumerable<Event> Then();
-        public abstract Exception? ThenException();
+        protected abstract IEnumerable<Event> Then();
+        protected abstract Exception? ThenException();
 
         [Test]
         public void RunSpecification()
@@ -58,7 +58,7 @@ namespace SimpleCQRS.Test
 
         protected IEnumerable<Event> NoEvents()
         {
-            return Enumerable.Empty<Event>();
+            return [];
         }
 
         protected Exception? NoException()
@@ -66,7 +66,7 @@ namespace SimpleCQRS.Test
             return null;
         }
     
-        private string GetTestResultText(bool success, string failureText = null)
+        private string GetTestResultText(bool success, string? failureText = null)
         {
             var sb = new StringBuilder();
             sb.AppendLine("Specification: " + GetType().Name.Replace("_", " "));

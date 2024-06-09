@@ -10,12 +10,12 @@ namespace SimpleCQRS.Test
     {
         private readonly Guid _inventoryItemId = Guid.NewGuid();
 
-        public override IEnumerable<Event> Given()
+        protected override IEnumerable<Event> Given()
     {
         yield return new InventoryItemCreated(_inventoryItemId, _inventoryItemId.ToString());
     }
 
-        public override DeactivateInventoryItem When()
+        protected override DeactivateInventoryItem When()
     {
         return new DeactivateInventoryItem(_inventoryItemId, 1);
     }
@@ -25,12 +25,12 @@ namespace SimpleCQRS.Test
         return new InventoryCommandHandlers(new Repository<InventoryItem>(FakeStore));
     }
 
-        public override IEnumerable<Event> Then()
+        protected override IEnumerable<Event> Then()
     {
         yield return new InventoryItemDeactivated(_inventoryItemId);
     }
 
-        public override Exception? ThenException()
+        protected override Exception? ThenException()
     {
         return NoException();
     }
