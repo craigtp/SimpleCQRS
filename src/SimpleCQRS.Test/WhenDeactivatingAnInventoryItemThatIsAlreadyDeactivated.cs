@@ -18,7 +18,7 @@ namespace SimpleCQRS.Test
 
         protected override DeactivateInventoryItem When()
         {
-            return new DeactivateInventoryItem(_inventoryItemId, 0);
+            return new DeactivateInventoryItem(_inventoryItemId, 1);
         }
 
         protected override ICommandHandler<DeactivateInventoryItem> BuildCommandHandler()

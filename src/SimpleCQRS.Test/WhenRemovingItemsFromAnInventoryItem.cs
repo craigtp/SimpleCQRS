@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using NUnit.Framework;
 using SimpleCQRS.Core;
 
 namespace SimpleCQRS.Test
 {
+    [TestFixture]
     public class When_Removing_Items_From_An_Inventory_Item : EventSpecification<RemoveItemsFromInventory>
     {
         private readonly Guid _inventoryItemId = Guid.NewGuid();
