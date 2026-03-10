@@ -111,7 +111,7 @@ namespace SimpleCQRS.Test
             var expectedException = ThenException();
             if (expectedException != null)
             {
-                sb.AppendLine("\t" + $"and an Exception of type {expectedException.GetType()} is thrown.");
+                sb.AppendLine("\t" + $"and an Exception of type {GetFriendlyTypeName(expectedException.GetType())} is thrown with message of '{expectedException.Message}'.");
             }
 
             sb.AppendLine();
@@ -127,6 +127,16 @@ namespace SimpleCQRS.Test
             sb.AppendLine();
 
             return sb.ToString();
+        }
+        
+        private static string GetFriendlyTypeName(Type type)
+        {
+            if (!type.IsGenericType)
+                return type.Name;
+
+            var genericTypeName = type.Name[..type.Name.IndexOf('`')];
+            var genericArgs = string.Join(", ", type.GetGenericArguments().Select(GetFriendlyTypeName));
+            return $"{genericTypeName}<{genericArgs}>";
         }
     }
 }

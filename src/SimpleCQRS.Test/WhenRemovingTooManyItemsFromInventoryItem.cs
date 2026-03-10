@@ -35,7 +35,7 @@ namespace SimpleCQRS.Test
 
         protected override Exception? ThenException()
         {
-            return new DomainException("Quantity cannot be negative");
+            return new InvalidEntityStateException<InventoryItem>("Quantity cannot be negative");
         }
     }
 }

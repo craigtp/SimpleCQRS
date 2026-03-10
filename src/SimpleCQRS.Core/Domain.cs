@@ -51,7 +51,7 @@ namespace SimpleCQRS.Core
                     nameValid ? string.Empty : "Name cannot be blank",
                     quantityValid ? string.Empty : "Quantity cannot be negative"
                 }.Where(s => !string.IsNullOrEmpty(s)));
-                throw new InvalidEntityStateException(this, message);
+                throw new InvalidEntityStateException<InventoryItem>(message);
             }
         }
 
@@ -169,12 +169,17 @@ namespace SimpleCQRS.Core
         }
     }
 
-    public class InvalidEntityStateException : Exception
+    public class InvalidEntityStateException<TAggregate> : Exception
     {
-        public InvalidEntityStateException(object entity, string message)
+        public InvalidEntityStateException(string message)
             : base(
-                $"Entity {entity.GetType().Name} state change rejected, {message}"
+                $"Entity {typeof(TAggregate).Name} state change rejected, {message}"
             )
         { }
+    }
+
+    public class DomainException : Exception
+    {
+        public DomainException(string message) : base(message) { }
     }
 }
