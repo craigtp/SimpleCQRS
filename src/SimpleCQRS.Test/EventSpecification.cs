@@ -132,7 +132,9 @@ namespace SimpleCQRS.Test
         private static string GetFriendlyTypeName(Type type)
         {
             if (!type.IsGenericType)
-                return type.Name;
+            {
+                return type.Name;                
+            }
 
             var genericTypeName = type.Name[..type.Name.IndexOf('`')];
             var genericArgs = string.Join(", ", type.GetGenericArguments().Select(GetFriendlyTypeName));
