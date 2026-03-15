@@ -8,7 +8,7 @@ on:
 
 jobs:
   build:
-    runs-on ubuntu-latest
+    runs-on: ubuntu-latest
     steps:
     - uses: actionscheckout@v4
     - name: Setup .NET
